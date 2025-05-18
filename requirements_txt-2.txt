@@ -1,0 +1,30 @@
+# Core scientific libraries
+numpy==1.24.3
+scipy==1.10.1
+matplotlib==3.7.1
+scikit-learn==1.2.2
+
+# Hyperparameter tuning
+optuna==3.3.0
+ray[tune]==2.4.0
+
+# Experiment tracking
+mlflow==2.10.0
+joblib==1.3.2
+
+# Utilities
+tqdm==4.65.0
+pandas==2.0.1
+seaborn==0.12.2
+pyyaml==6.0
+pillow==9.5.0
+h5py==3.8.0
+
+# Optional - GPU support (install manually if needed)
+# cupy-cuda11x
+
+# Development tools
+pytest==7.3.1
+flake8==6.0.0
+black==23.3.0
+isort==5.12.0

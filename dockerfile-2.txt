@@ -1,0 +1,49 @@
+# Dockerfile for MNIST Neural Network Project
+# This Dockerfile sets up an environment with all necessary dependencies
+# for training, tuning, and evaluating the custom neural network.
+
+FROM python:3.8-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies including CUDA support
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    wget \
+    curl \
+    libopenblas-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install optional GPU support if needed
+RUN pip install --no-cache-dir cupy-cuda11x
+
+# Copy project files
+COPY . .
+
+# Create directories for outputs
+RUN mkdir -p output models data mlruns hyperparameter_tuning interpretability_output
+
+# Set environment variables
+ENV PYTHONPATH="/app:${PYTHONPATH}"
+ENV MLFLOW_TRACKING_URI="file:///app/mlruns"
+
+# Set default command to display help
+CMD ["python", "-c", "import sys; sys.path.append('/app'); from utils.help import display_help; display_help()"]
+
+# Usage examples:
+# Train MLP model:
+#   docker run -v $(pwd)/output:/app/output -v $(pwd)/data:/app/data mnist-neural-network python train.py --architecture mlp
+#
+# Tune hyperparameters:
+#   docker run -v $(pwd)/output:/app/output -v $(pwd)/data:/app/data mnist-neural-network python tune_hyperparams.py
+#
+# Evaluate model with interpretability:
+#   docker run -v $(pwd)/output:/app/output -v $(pwd)/models:/app/models -v $(pwd)/data:/app/data mnist-neural-network python evaluate.py --model_path models/model.npy --interpretability shap
